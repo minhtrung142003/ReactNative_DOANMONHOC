@@ -63,11 +63,7 @@ const Register = ({navigation})=> {
                     <TextInput placeholder="Nhập mật khẩu" style={styles.ip} secureTextEntry={true} onChangeText={(value)=>setPassword(value)}></TextInput>
                     <Text style ={{color:'red'}}>{errorPassword}</Text>
                 </View> 
-                <View style ={styles.group}>
-                    <Icon name ="locked" style={styles.icon}/>
-                    <TextInput placeholder="Nhập lại mật khẩu" style={styles.ip} secureTextEntry={true} onChangeText={(value)=>setPassword(value)}></TextInput>
-                    <Text style ={{color:'red'}}>{errorPassword}</Text>
-                </View>
+              
                
                 <TouchableOpacity style={styles.btn} onPress={()=> onSubmit()}>
                     <Text style={{color:'#ffffff', fontWeight:'bold'}}>Đăng ký</Text>

@@ -10,19 +10,25 @@ export default function ListCategory() {
       <View style={styles.container}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.item}>
-            <Image source={require('../assets/item_image_1.png')} style={styles.image}></Image>
+            <Image source={require('../assets/category1.jpg')} style={styles.image}></Image>
           </View>
           <View style={styles.item}>
-            <Image source={require('../assets/item_image_2.png')} style={styles.image}></Image>
+            <Image source={require('../assets/category2.jpg')} style={styles.image}></Image>
           </View>
           <View style={styles.item}>
-            <Image source={require('../assets/item_image_3.png')} style={styles.image}></Image>
+            <Image source={require('../assets/category3.jpg')} style={styles.image}></Image>
           </View>
           <View style={styles.item}>
-            <Image source={require('../assets/item_image_4.png')} style={styles.image}></Image>
+            <Image source={require('../assets/category4.jpg')} style={styles.image}></Image>
           </View>
           <View style={styles.item}>
-            <Image source={require('../assets/item_image_4.png')} style={styles.image}></Image>
+            <Image source={require('../assets/category5.jpg')} style={styles.image}></Image>
+          </View>
+          <View style={styles.item}>
+            <Image source={require('../assets/category6.jpg')} style={styles.image}></Image>
+          </View>
+          <View style={styles.item}>
+            <Image source={require('../assets/category7.jpg')} style={styles.image}></Image>
           </View>
         </ScrollView>
       </View>

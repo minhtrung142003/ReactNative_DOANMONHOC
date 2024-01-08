@@ -1,106 +1,124 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, Image, StyleSheet } from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
+import React, {useEffect, useState, useContext} from "react";
+import {View, Text, Button, FlatList, StyleSheet,TouchableOpacity} from "react-native";
+import { CartContext } from "../cartfolder/CartContext";
+import { Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-const Cart = () => {
-    const navigation = useNavigation();
-    const [products, setProducts] = useState([]);
-
-    useEffect(() => {
-        fetch('https://64263b7ed24d7e0de46c2046.mockapi.io/trung14/api/v1/Laptop')
-            .then(res => res.json())
-            .then(json => setProducts(json))
-    }, []);
-
-    const addToCart = (item) => {
-        const newItem = {
-            name: item.title,
-            url: item.avatar,
-            price: item.price,
-            quantity: 1,
-        };
-        // Modify this part to handle adding items to the global cart state
-        global.mycart.push(newItem);
+export function Cart({navigation}){
+	const handleBack = () => {
+        navigation.goBack();
     };
+    const {items, getItemsCount, getTotalPrice,removeItemFromCart, increaseQuantity,
+		decreaseQuantity, } = useContext(CartContext);
 
-    const renderItem = ({ item }) => (
-        <View style={{ flex: 1, margin: 8 }}>
-            <TouchableOpacity
-                onPress={() => {
-                    navigation.navigate('productDetail', {
-                        name: item.title,
-                        url: item.avatar,
-                        price: item.price,
-                    });
-                }}
-                style={{
-                    backgroundColor: '#fff',
-                    borderRadius: 10,
-                    borderWidth: 1,
-                    borderColor: '#ccc',
-                    padding: 10,
-                }}
-            >
-                <Image
-                    source={{ uri: item.avatar }}
-                    style={{ height: 100, width: '100%', borderRadius: 10, marginBottom: 10 }}
-                />
-                <Text style={{ fontSize: 16, color: '#333', marginBottom: 5 }}>{item.title}</Text>
-                <Text style={{ color: 'red', marginBottom: 5 }}>${item.price}</Text>
-                <TouchableOpacity
-                    onPress={() => addToCart(item)}
-                    style={{
-                        backgroundColor: '#1e88e5',
-                        borderRadius: 5,
-                        padding: 8,
-                        alignItems: 'center',
-                    }}
-                >
-                    <Text style={{ color: '#fff' }}>Add to cart</Text>
-                </TouchableOpacity>
+    function Totals(){
+        let [total, setTotal] = useState(0);
+        useEffect(() => {
+            setTotal(getTotalPrice())
+        })
+        return(
+			
+            <View style={styles.cartLineTotal}>
+				 <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+                <Ionicons name="arrow-back" size={24} color="black" />
             </TouchableOpacity>
-        </View>
-    );
-
-    return (
-        
-        <View style={{ flex: 1, backgroundColor: '#fff', padding: 10 }}>
-<View style={styles.headerContainer}>
-                <Text style={styles.headerText}>Giỏ hàng</Text>
-                <TouchableOpacity style={styles.cartIconContainer}>
-                    <FontAwesome name='shopping-cart' size={24} color="#fff" />
-                </TouchableOpacity>
+                <Text style={[styles.lineLeft, styles.lineTotal]}>Total</Text>
+                <Text style={styles.mainTotal}>$ {total}</Text>
             </View>
-            <FlatList
-                keyExtractor={item => item.name}
-                numColumns={2}
-                data={products}
-                renderItem={renderItem}
-            />
-        </View>
-    );
-};
+        )
+    }
+	function handleRemoveItem(id) {
+		removeItemFromCart(id);
+	  }
 
-export default Cart;
+    function renderItem({item}){
+        return(
+            <>
+                <View style={styles.cartLine}>
+				<Image source={{uri: item.product.image}} style={{width:'50%', height:'100%'}}/>
+				
+                    <Text style={styles.lineLeft}>{item.product.title} x   {item.qty} 
+					<Text style={styles.productTotal}>${item.totalPrice}</Text></Text>
+                </View>
+				<View style={{
+					flexDirection:'row',
+					justifyContent:'space-between'
+					
+				}}>
+				<TouchableOpacity style={{backgroundColor:'#e21f6d',height:40,width:40,borderRadius:10}} onPress={() => decreaseQuantity(item.id)}>
+					<Text style={[styles.quantityButton,{alignSelf:'center'}, { fontSize: 28 }]}>-</Text>
+				</TouchableOpacity>
+				<TouchableOpacity style={{backgroundColor:'#e21f6d',height:40,width:40,borderRadius:10}} onPress={() => increaseQuantity(item.id)}>
+					<Text style={[styles.quantityButton,{alignSelf:'center'}, { fontSize: 28 }]}>+</Text>
+				</TouchableOpacity>
+				</View>
+				<TouchableOpacity onPress={() => handleRemoveItem(item.id)}>
+            <Text style={styles.removeButton}>Remove</Text>
+          </TouchableOpacity>
+            </>
+        )
+    }
+
+    return(
+        <FlatList
+            style={styles.itemsList}
+            contentContainerStyle={styles.itemsListContainer}
+            data={items}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.product.id.toString()}
+            ListFooterComponent={Totals}
+        />
+    )
+
+}
+
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-    },
-    headerContainer: {
-        flexDirection: 'row',
-        paddingTop: 30,
-        paddingBottom: 15,
-        backgroundColor: '#1e88e5',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 15,
-    },
-    headerText: {
-        fontWeight: '500',
-        color: 'white',
-        fontSize: 20,
-    },
-  })
+	cartLine: {
+		flexDirection: 'row',
+		width: '80%',
+		paddingVertical: 10
+	},
+	image: {
+		width: '25%',
+		aspectRatio: 1,
+		marginRight: 5
+	},
+	cartLineTotal: {
+		flexDirection: 'row',
+		borderTopColor: '#dddddd',
+		borderTopWidth: 1
+	},
+	productTotal: {
+		fontWeight: 'bold'
+	},
+	lineTotal: {
+		fontWeight: 'bold'
+	},
+	lineLeft: {
+		fontSize: 20,
+		lineHeight: 40,
+		color: '#333333'
+	},
+	lineRight: {
+		fontSize: 20,
+		fontWeight: 'bold',
+		color: '#333333',
+		textAlign: 'left',
+	},
+	mainTotal: {
+		flex: 1,
+		fontSize: 20,
+		fontWeight: 'bold',
+		lineHeight: 40,
+		color: '#333333',
+		textAlign: 'right'
+	},
+	itemsList: {
+		backgroundColor: '#eeeeee'
+	},
+	itemsListContainer: {
+		backgroundColor: '#eeeeee',
+		paddingVertical: 8,
+		marginHorizontal: 8
+	}
+})
