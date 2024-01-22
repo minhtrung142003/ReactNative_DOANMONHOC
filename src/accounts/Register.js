@@ -19,21 +19,23 @@ const Register = ({navigation})=> {
     const [password, setPassword] = useState('');
     const [checkEmail, setCheckEmail] = useState(true);
     const [errorPassword, setErrorPassword] = useState('');
-    const onSubmit = () =>{
+    const onSubmit = () => {
         let formData = {
-            email:email,
+            email: email,
             password: password,
-           
-        }
-
+        };
+    
         axios.post('https://64263b7ed24d7e0de46c2046.mockapi.io/trung14/api/v1/trung', formData)
-        .then((response)=> {
-            if(response.data){
-                Alert.alert(`ok nha ${response.data.email} Đăng nhập thôi`);
-                navigation.navigate('Login')
-            }
-        })
-        .catch((err)=>console.log(err))
+            .then((response) => {
+                // Xử lý phản hồi
+                console.log('Đăng ký thành công:', response.data);
+                navigation.navigate('Login');
+            })
+            .catch((err) => {
+                // Xử lý lỗi
+                console.error('Đăng ký thất bại:', err);
+                Alert.alert('Đăng ký thất bại', 'Vui lòng kiểm tra lại thông tin đăng ký.');
+            });
     }
     return (
         <SafeAreaView style={styles.container}>

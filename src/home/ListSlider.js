@@ -4,8 +4,8 @@ import { StyleSheet, View, Image, ScrollView, Dimensions } from 'react-native';
 const { width } = Dimensions.get('window');
 
 const data = [
-  { id: '1', image: require('../assets/slider1.png') },
-  { id: '2', image: require('../assets/slider2.png') },
+  { id: '1', image: require('../assets/slider_2.jpg') },
+  { id: '2', image: require('../assets/slider_1.webp') },
   { id: '3', image: require('../assets/slider3.png') },
 ];
 

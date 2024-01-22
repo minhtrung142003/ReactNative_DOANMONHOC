@@ -9,7 +9,7 @@ export function CartProvider(props) {
   // Fetch products once when the component mounts
   useEffect(() => {
     const getApi = () => {
-      fetch('https://fakestoreapi.com/products')
+      fetch('https://64263b7ed24d7e0de46c2046.mockapi.io/trung14/api/v1/Laptop')
         .then(response => response.json())
         .then(data => setProducts(data))
         .catch(err => console.log(err));

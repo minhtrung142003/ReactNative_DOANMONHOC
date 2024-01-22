@@ -10,7 +10,6 @@ const Detail = ({ route }) => {
   const { item } = route.params;
   const [qty, setQty] = useState('1');
   const [isModal, setIsModal] = useState(false);
-
   const navigation = useNavigation();
 
   const updateQty = (qty) => {
@@ -29,7 +28,7 @@ const Detail = ({ route }) => {
       <Image source={{ uri: item.image }} style={styles.productImage} />
 
       <View style={styles.productInfo}>
-        <Text style={styles.productName}>{item.name}</Text>
+        <Text style={styles.productName}>{item.title}</Text>
         <Text style={styles.productPrice}>Giá: {item.price}</Text>
         <Text style={styles.productDescription}>{item.description}</Text>
       </View>

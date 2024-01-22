@@ -38,7 +38,7 @@ export function Cart({navigation}){
 				<Image source={{uri: item.product.image}} style={{width:'50%', height:'100%'}}/>
 				
                     <Text style={styles.lineLeft}>{item.product.title} x   {item.qty} 
-					<Text style={styles.productTotal}>${item.totalPrice}</Text></Text>
+					<Text style={styles.productTotal}>{item.totalPrice}</Text></Text>
                 </View>
 				<View style={{
 					flexDirection:'row',

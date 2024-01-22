@@ -1,111 +1,156 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import axios from 'axios';
+import React, { useState } from "react";
+import { Alert, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import Icon from 'react-native-vector-icons/Fontisto';
 
 const Login = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+    const handleBack = () => {
+        navigation.goBack();
+    };
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Vui lòng nhập Email và mật khẩu');
-      return;
-    }
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    try {
-      const response = await fetch('https://64263b7ed24d7e0de46c2046.mockapi.io/trung14/api/v1/trung', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
+    const isEmailValid = (email) => {
+        // Sử dụng biểu thức chính quy để kiểm tra định dạng email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Đăng nhập thành công. Token:');
-        navigation.navigate('Home1');
-      } else {
-        console.log('Đăng nhập thất bại');
-        Alert.alert('Đăng nhập thất bại', 'Vui lòng kiểm tra lại thông tin đăng nhập.');
-      }
-    } catch (error) {
-      console.error('Lỗi khi đăng nhập:', error);
-      Alert.alert('Đăng nhập thất bại', 'Có lỗi xảy ra. Vui lòng thử lại sau.');
-    }
-  };
+    const handleLogin = () => {
+        ('Email:', email);
+        ('Password:', password);
 
-  const handleRegister = () => {
-    navigation.navigate('Register');
-  };
+        // Kiểm tra điều kiện nhập liệu
+        if (!email || !password) {
+            Alert.alert('Lỗi', 'Vui lòng nhập đầy đủ email và mật khẩu.');
+            return;
+        }
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Đăng nhập</Text>
-      <View style={styles.form}>
-        <View style={styles.group}>
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            placeholder="Nhập địa chỉ email"
-            value={email}
-            onChangeText={setEmail}
-            style={styles.input}
-          />
-        </View>
-        <View style={styles.group}>
-          <Text style={styles.label}>Mật khẩu</Text>
-          <TextInput
-            placeholder="Nhập mật khẩu"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            style={styles.input}
-          />
-        </View>
-      </View>
-      <Button title="Đăng nhập" onPress={handleLogin} />
+        // Kiểm tra định dạng email
+        if (!isEmailValid(email)) {
+            Alert.alert('Sai tài khoản hoặc mật khẩu');
+            return;
+        }
 
-      <TouchableOpacity onPress={handleRegister}>
-        <Text style={styles.registerLink}>Chưa có tài khoản? Đăng ký ngay</Text>
-      </TouchableOpacity>
-    </View>
-  );
+        const formData = {
+            email: email,
+            password: password,
+        };
+
+        axios.post('https://64263b7ed24d7e0de46c2046.mockapi.io/trung14/api/v1/trung/', formData)
+        .then((response) => {
+            console.log('Đăng nhập thành công:', response.data);
+            navigation.navigate('Home1');
+        })
+        .catch((error) => {
+            console.error('Đăng nhập thất bại:', error);
+
+            if (error.response) {
+                console.log('Mã lỗi:', error.response.status);
+            }
+
+            Alert.alert('Đăng nhập thất bại', 'Vui lòng kiểm tra lại thông tin đăng nhập.');
+        });
+    };
+
+    const handleNavigateToRegister = () => {
+        navigation.navigate('Register');
+    };
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <TouchableOpacity style={styles.backButton} onPress={handleBack}>
+                <Ionicons name="arrow-back" size={24} color="black" />
+            </TouchableOpacity>
+            <View style={styles.title}>
+                <Text style={styles.titleText}>Đăng nhập</Text>
+            </View>
+            <View style={styles.form}>
+                <View style={styles.inputGroup}>
+                    <Icon name="email" style={styles.icon} />
+                    <TextInput
+                        placeholder="Email Address"
+                        style={styles.input}
+                        onChangeText={(value) => setEmail(value)}
+                    />
+                </View>
+                <View style={styles.inputGroup}>
+                    <Icon name="locked" style={styles.icon} />
+                    <TextInput
+                        placeholder="Nhập mật khẩu"
+                        style={styles.input}
+                        secureTextEntry={true}
+                        onChangeText={(value) => setPassword(value)}
+                    />
+                </View>
+                <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+                    <Text style={styles.buttonText}>Đăng nhập</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleNavigateToRegister}>
+                    <Text style={styles.registerLink}>Chưa có tài khoản? Đăng ký ngay</Text>
+                </TouchableOpacity>
+            </View>
+        </SafeAreaView>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  form: {
-    width: '80%',
-  },
-  group: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    width: '100%',
-    padding: 8,
-  },
-  registerLink: {
-    color: '#1bcdff',
-    marginTop: 10,
-  },
+    container: {
+        flex: 1,
+        backgroundColor: '#ffffff',
+        paddingHorizontal: 20,
+        paddingTop: 20,
+    },
+    backButton: {
+        position: 'absolute',
+        top: 20,
+        left: 20,
+        zIndex: 1,
+    },
+    title: {
+        marginTop: 30,
+        alignItems: 'center',
+    },
+    titleText: {
+        fontWeight: 'bold',
+        fontSize: 30,
+        color: 'black',
+    },
+    form: {
+        marginTop: 30,
+    },
+    inputGroup: {
+        marginTop: 15,
+    },
+    input: {
+        borderBottomWidth: 1,
+        backgroundColor: '#fff',
+        borderColor: 'gray',
+        paddingLeft: 35,
+    },
+    icon: {
+        fontSize: 25,
+        position: 'absolute',
+        zIndex: 1000,
+    },
+    loginButton: {
+        marginTop: 20,
+        backgroundColor: '#1bcdff',
+        paddingVertical: 15,
+        alignItems: 'center',
+        borderRadius: 10,
+    },
+    buttonText: {
+        color: '#ffffff',
+        fontWeight: 'bold',
+    },
+    registerLink: {
+        color: '#1bcdff',
+        marginTop: 10,
+        marginLeft: 60,
+    },
 });
 
 export default Login;
